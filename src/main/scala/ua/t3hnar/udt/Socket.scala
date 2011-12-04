@@ -3,7 +3,6 @@ package ua.t3hnar.udt
 import com.barchart.udt.{TypeUDT, SocketUDT}
 import java.net.InetSocketAddress
 import java.nio.ByteBuffer
-import scala.Predef._
 
 /**
  * @author Yaroslav Klymko
@@ -54,7 +53,7 @@ class Socket(private val socket: SocketUDT = new SocketUDT(TypeUDT.DATAGRAM)) {
 
   private def withSize(buf: ByteBuffer): ByteBuffer = {
     val size = buf.remaining()
-    //TODO !!!
+    //TODO Need to try omit this copy somehow
     val result = ByteBuffer.allocateDirect(sizeSize + size)
       .putInt(size)
       .put(buf)
@@ -62,12 +61,10 @@ class Socket(private val socket: SocketUDT = new SocketUDT(TypeUDT.DATAGRAM)) {
     result
   }
 
-
   def send(buf: ByteBuffer) {
     if (buf.isDirect) socket.send(withSize(buf))
     else send(buf.array())
   }
-
 
 //  def receive(implicit bufSize: Int): Bytes = {
 //    val buf = new Bytes(bufSize + sizeSize)
