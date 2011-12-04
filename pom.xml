@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ua.t3hnar.udt</groupId>
-    <artifactId>scala-udt</artifactId>
-    <version>1.0</version>
+    <artifactId>scala-udt_${scala.version}</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
     <name>Scala UDT</name>
     <url>https://github.com/t3hnar/scala-udt</url>
@@ -58,7 +58,30 @@
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.barchart.udt</groupId>
+            <artifactId>barchart-udt4-bundle</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.0</version>
+        </dependency>
 
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.0</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
