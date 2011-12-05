@@ -37,32 +37,30 @@ class Socket(private val socket: SocketUDT = new SocketUDT(TypeUDT.DATAGRAM)) {
   }
 
 
-  implicit def intWithBytes(i: Int) = new {
-    def bytes: Bytes = ByteBuffer.wrap(new Bytes(sizeSize)).putInt(i).array()
-  }
+//  implicit def intWithBytes(i: Int) = new {
+//    def bytes: Bytes = ByteBuffer.wrap(new Bytes(sizeSize)).putInt(i).array()
+//  }
 
-  implicit def bs2Int(bs: Bytes) = new {
-    def getInt: Int = ByteBuffer.wrap(bs).getInt
-  }
+//  implicit def bs2Int(bs: Bytes) = new {
+//    def getInt: Int = ByteBuffer.wrap(bs).getInt
+//  }
 
   def send(bs: Bytes) {
-    val size = bs.length.bytes
-    val res = size ++ bs
-    socket.send(res)
+    socket.send(bs)
   }
 
-  private def withSize(buf: ByteBuffer): ByteBuffer = {
-    val size = buf.remaining()
-    //TODO Need to try omit this copy somehow
-    val result = ByteBuffer.allocateDirect(sizeSize + size)
-      .putInt(size)
-      .put(buf)
-    result.rewind()
-    result
-  }
+//  private def withSize(buf: ByteBuffer): ByteBuffer = {
+//    val size = buf.remaining()
+//    //TODO Need to try omit this copy somehow
+//    val result = ByteBuffer.allocateDirect(sizeSize + size)
+//      .putInt(size)
+//      .put(buf)
+//    result.rewind()
+//    result
+//  }
 
   def send(buf: ByteBuffer) {
-    if (buf.isDirect) socket.send(withSize(buf))
+    if (buf.isDirect) socket.send(buf)
     else send(buf.array())
   }
 
@@ -74,24 +72,18 @@ class Socket(private val socket: SocketUDT = new SocketUDT(TypeUDT.DATAGRAM)) {
 //  }
 
   def receive(implicit bufSize: Int): Bytes = {
-    val (buf, _) = receiveBuffer(bufSize)
+    val buf = receiveBuffer(bufSize)
     val bs = new Bytes(buf.limit())
     buf.get(bs)
     bs
   }
 
-  def receiveBuffer(implicit bufSize: BufSize): (ByteBuffer, BufSize) = {
-    val allocated = ByteBuffer.allocateDirect(bufSize + sizeSize)
+  def receiveBuffer(implicit bufSize: BufSize): ByteBuffer = {
+    val allocated = ByteBuffer.allocateDirect(bufSize)
     socket.receive(allocated)
     allocated.limit(allocated.position())
     allocated.rewind()
-
-    val withSize = allocated.slice()
-    val sentSize = withSize.getInt
-
-    val buf = withSize.slice()
-    buf.rewind()
-    buf -> sentSize
+    allocated.slice()
   }
 
   override def toString = "Socket(" + getAddress + ")"
@@ -100,6 +92,5 @@ class Socket(private val socket: SocketUDT = new SocketUDT(TypeUDT.DATAGRAM)) {
 object Socket {
   type Bytes = Array[Byte]
   type BufSize = Int
-  val sizeSize = 4
   implicit val bufSize = 1024
 }

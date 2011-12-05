@@ -23,6 +23,7 @@ class SocketSpec extends SpecificationWithJUnit {
         buf.rewind()
         val bs = new Bytes(buf.limit())
         buf.get(bs)
+        buf.rewind()
         bs
       } else buf.array()
     }
@@ -30,7 +31,7 @@ class SocketSpec extends SpecificationWithJUnit {
 
 
   val server = new Socket().bind(new InetSocketAddress("localhost", 12345)).listen()
-  val size = 100
+  val size = 1000
   val bytes = randomBytes(size)
   val md5 = bytes.md5
 
@@ -57,9 +58,7 @@ class SocketSpec extends SpecificationWithJUnit {
       actor {
         server.accept.send(buffer)
       }
-
-      val (buf, sentSize) = client.receiveBuffer(size)
-      sentSize must_== size
+      val buf = client.receiveBuffer(size)
       buf.md5 must_== md5
     }
 
@@ -68,8 +67,7 @@ class SocketSpec extends SpecificationWithJUnit {
         server.accept.send(ByteBuffer.wrap(bytes))
       }
 
-      val (buf, sentSize) = client.receiveBuffer(size)
-      sentSize must_== size
+      val buf = client.receiveBuffer(size)
       buf.md5 must_== md5
     }
 
@@ -85,8 +83,7 @@ class SocketSpec extends SpecificationWithJUnit {
         server.accept.send(bytes)
       }
 
-      val (buf, sentSize) = client.receiveBuffer(size)
-      sentSize must_== size
+      val buf = client.receiveBuffer(size)
       buf.md5 must_== md5
     }
 
@@ -95,8 +92,7 @@ class SocketSpec extends SpecificationWithJUnit {
         server.accept.send(buffer)
       }
 
-      val (buf, sentSize) = client.receiveBuffer(size)
-      sentSize must_== size
+      val buf = client.receiveBuffer(size)
       buf.md5 must_== md5
     }
 
@@ -105,8 +101,7 @@ class SocketSpec extends SpecificationWithJUnit {
         server.accept.send(buffer)
       }
 
-      val (buf, sentSize) = client.receiveBuffer(size + 10)
-      sentSize must_== size
+      val buf = client.receiveBuffer(size + 10)
       buf.md5 must_== md5
     }
 
@@ -118,8 +113,7 @@ class SocketSpec extends SpecificationWithJUnit {
 
       val smaller = size - 10
 
-      val (buf, sentSize) = client.receiveBuffer(smaller)
-      sentSize must_== size
+      val buf = client.receiveBuffer(smaller)
       buf.md5 must_== bytes.take(smaller).md5
     }
 
