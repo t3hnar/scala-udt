@@ -4,7 +4,6 @@ import org.specs2.mutable.SpecificationWithJUnit
 import actors.Actor._
 import java.net.InetSocketAddress
 import util.Random
-import org.apache.commons.codec.digest.DigestUtils
 import Socket._
 import java.nio.ByteBuffer
 
